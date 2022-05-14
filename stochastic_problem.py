@@ -50,5 +50,5 @@ class Stochastic:
   def getStorageCosts(self):
     return self.storage_cost_func.value
 
-  def solveNlp(self):
+  def solve(self):
     return self.total, self.matrix.value

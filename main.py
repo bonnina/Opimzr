@@ -19,29 +19,31 @@ with open('input.json', 'r', encoding='utf-8') as f:
     penalty = np.array(file['penalty'])
 
 state = State(production, transportation, additional_cost, demand, capacity, min_demand, max_demand, storage, penalty)
-
-# solve and print results
 scenarios = 4
+
+# solve and save results to a file
+with open('output.txt', 'w') as f:
+    print('Results:\n', file=f)
 
 for factory in range(scenarios):
   transport = Transport(factory, state)
-  total, matrix = transport.solveLp()
-  print(f"\nTransport Problem solution for additional production on the factory №{factory+1}")
-  print("Transport Matrix")
-  print(matrix)
-  print("Production cost: ", transport.getProdCost())
-  print("Transport cost: ", transport.getTransportCost())
-  print(f"Total cost: {total:.2f}\n")
+  total, matrix = transport.solve()
+  with open('output.txt', 'a') as f:
+    print('Transport Problem solution for additional production on the factory №', {factory + 1}, file=f)
+    print('Transport Matrix:\n', matrix, file=f)
+    print(f"Production cost: {transport.getProdCost():.2f}", file=f)
+    print(f"Transport cost: {transport.getTransportCost():.2f}", file=f)
+    print(f"Total cost: {total:.2f}\n", file=f)
 
 for factory in range(scenarios):
-  stochastic = Stochastic(factory, state)
-  total, matrix = stochastic.solveNlp()
-  np.set_printoptions(precision=3, suppress=True)
-  print(f"\nStochastic Problem solution for additional production on the factory №{factory+1}")
-  print("Transport Matrix")
-  print(matrix)
-  print(f"Production cost: {stochastic.getProdCost():.2f}")
-  print(f"Transport cost: {stochastic.getTransportCost():.2f}")
-  print(f"Total cost: {total:.2f}")
-  print(f"Storage cost: {stochastic.getStorageCosts():.2f}")
-  print(f"Deficit penalty cost: {stochastic.getDeficitCost():.2f}\n")
+    stochastic = Stochastic(factory, state)
+    total, matrix = stochastic.solve()
+    np.set_printoptions(precision=3, suppress=True)
+    with open('output.txt', 'a') as f:
+        print('Stochastic Problem solution for additional production on the factory №', {factory + 1}, file=f)
+        print('Transport Matrix:\n', matrix, file=f)
+        print(f"Production cost: {stochastic.getProdCost():.2f}", file=f)
+        print(f"Transport cost: {stochastic.getTransportCost():.2f}", file=f)
+        print(f"Total cost: {total:.2f}", file=f)
+        print(f"Storage cost: {stochastic.getStorageCosts():.2f}", file=f)
+        print(f"Deficit penalty cost: {stochastic.getDeficitCost():.2f}\n", file=f)

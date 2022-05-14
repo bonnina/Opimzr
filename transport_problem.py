@@ -16,7 +16,7 @@ class Transport:
     self.objective = cp.Minimize(self.prod_func + self.transport_func)
     self.constraints = [self.matrix >= 0, cp.sum(self.matrix, axis=0) == capacity, cp.sum(self.matrix, axis=1) == demand]
     self.problem = cp.Problem(self.objective, self.constraints)
-    self.total = self.problem.solve()
+    self.total = self.problem.solve(verbose='true')
 
   def getDemand(self):
     return np.copy(self.state.demand)
@@ -27,5 +27,5 @@ class Transport:
   def getTransportCost(self):
     return self.transport_func.value
 
-  def solveLp(self):
+  def solve(self):
     return self.total, self.matrix.value
